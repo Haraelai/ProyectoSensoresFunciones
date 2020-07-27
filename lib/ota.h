@@ -1,7 +1,7 @@
 #include <arduino.h>
 
-const char *ssid = "TOTALPLAY_A2D7B5";
-const char *passwrd = "1WD43WRC40";
+const char *ssid = "INFINITUM2uyy";
+const char *passwrd = "7c4dc8eaa9";
 
 
 #if defined(ESP32_RTOS) && defined(ESP32)

@@ -21,8 +21,15 @@ StaticJsonDocument<512> horaActual;
 StaticJsonDocument<512> post_ejemplo;
 StaticJsonDocument<1024> get_ejemplo;
 StaticJsonDocument<128> nivelesdegas;
+StaticJsonDocument<128> consumoenergetico;
+StaticJsonDocument<128> temperatura;
+StaticJsonDocument<128> nivelesdeagua;
+StaticJsonDocument<128> nivelesdeluz;
 
-const char *urlGas = "http://192.168.100.155:8080/ProyectoSensores/public/api/fugasdegas";
+
+
+
+const char *urlGas = "http://192.168.1.67/ProyectoSensores/public/api/fugasdegas";
 const char *geturl = "http://192.168.100.155:8080/esp32-api/public/api/resetpassword";
 
 void setup()
@@ -39,13 +46,48 @@ int sumatoria = 0;
 
 void fugadegas() {
   String zonas [] = {"cocina", "sala", "patio", "baño", "recamara1", "recamara2"};
+  String tipo [] = {"Tinaco1", "Tinaco2", "Sisterna casa", "Sisterna vieja","Tinaco 3", "Tanque"};
+  int x = random(30);
   nivelesdegas.clear();
+  consumoenergetico.clear();
+  temperatura.clear();
+  nivelesdeagua.clear();
+  nivelesdeluz.clear();
   int posicion = random(5);
+
   nivelesdegas["fechayhora"] = reloj->timeStringBuff;
   nivelesdegas["area"] = zonas [posicion];
   nivelesdegas["niveldegas"] = random(20 + posicion,25 + posicion);
+
+  consumoenergetico["fechayhora"] = reloj->timeStringBuff;
+  consumoenergetico["consumo"] = x;
+  consumoenergetico["area"] = zonas [posicion];
+
+  temperatura["fechayhora"] = reloj->timeStringBuff;
+  temperatura["temperatura"] = random(10 + posicion,70 + posicion);
+  temperatura["zona"] = zonas [posicion];
+
+  nivelesdeagua["fechayhora"] = reloj->timeStringBuff;
+  nivelesdeagua["tipocontenedor"] = tipo [posicion];
+  nivelesdeagua["porcentaje"] = random(100);
+
+  nivelesdeluz["fechayhora"] = reloj->timeStringBuff;
+  nivelesdeluz["porcentaje"] = random(100);
+
+
+
+
   serializeJsonPretty(nivelesdegas,Serial);
   webInterface->webPOST(nivelesdegas, urlGas);
+  serializeJsonPretty(consumoenergetico,Serial);
+  webInterface->webPOST(consumoenergetico, urlGas);
+  serializeJsonPretty(temperatura,Serial);
+  webInterface->webPOST(temperatura, urlGas);
+    serializeJsonPretty(nivelesdeagua,Serial);
+  webInterface->webPOST(nivelesdeagua, urlGas);
+      serializeJsonPretty(nivelesdeluz,Serial);
+  webInterface->webPOST(nivelesdeluz, urlGas);
+  
 }
 void loop()
 {
@@ -64,6 +106,7 @@ void loop()
   post_ejemplo["Fecha"] = "2020-05-10";
   post_ejemplo["Hora"] = reloj->timeStringBuff;
   post_ejemplo["Temperatura"] = random(30);
+  
 
    // webInterface->webPOST(post_ejemplo, urlPost);
   //  webInterface->webGET(geturl);
