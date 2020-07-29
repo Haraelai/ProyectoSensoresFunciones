@@ -25,6 +25,7 @@ StaticJsonDocument<128> consumoenergetico;
 StaticJsonDocument<128> temperatura;
 StaticJsonDocument<128> nivelesdeagua;
 StaticJsonDocument<128> nivelesdeluz;
+StaticJsonDocument<1024> alarmas;
 
 
 
@@ -47,7 +48,8 @@ int sumatoria = 0;
 void fugadegas() {
   String zonas [] = {"cocina", "sala", "patio", "baño", "recamara1", "recamara2"};
   String tipo [] = {"Tinaco1", "Tinaco2", "Sisterna casa", "Sisterna vieja","Tinaco 3", "Tanque"};
-  int x = random(30);
+  String problems [] = {"fallo en la chimenea", "ventana sala abierta", "ventana recamara 1 abierta", "ventana recamara 2 abierta","Puerta principal abierta", "cochera abierta"};
+  int x = random(300);
   nivelesdegas.clear();
   consumoenergetico.clear();
   temperatura.clear();
@@ -74,9 +76,13 @@ void fugadegas() {
   nivelesdeluz["fechayhora"] = reloj->timeStringBuff;
   nivelesdeluz["porcentaje"] = random(100);
 
+  alarmas["fechayhora"] = reloj->timeStringBuff;
+  alarmas["problema"] = problems [posicion];
+  alarmas["area"] = "Casa principal";
 
-
-
+  
+  serializeJsonPretty(alarmas,Serial);
+  webInterface->webPOST(alarmas, urlGas);
   serializeJsonPretty(nivelesdegas,Serial);
   webInterface->webPOST(nivelesdegas, urlGas);
   serializeJsonPretty(consumoenergetico,Serial);
@@ -87,6 +93,7 @@ void fugadegas() {
   webInterface->webPOST(nivelesdeagua, urlGas);
       serializeJsonPretty(nivelesdeluz,Serial);
   webInterface->webPOST(nivelesdeluz, urlGas);
+  
   
 }
 void loop()
